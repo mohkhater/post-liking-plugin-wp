@@ -10,17 +10,31 @@
 
 
 
-          <?php if ($user_id != 0) {  ?>
+          <?php if ($user_id != 0) {
 
-              <button class="btn likebtn" id="btn_like" name="btn_liking" value="true" type="submit">
-                  <span class="like-count" id="like-count"><?= get_post_meta($post_id, '_post_liking', true); ?></span>
+                if (get_post_like_count($post_id, 1) != 0) {
+                    $like_count = get_post_like_count($post_id, 1);
+                } else $like_count = '';
+
+                if (get_post_like_count($post_id, 0) != 0) {
+                    $dislike_count = get_post_like_count($post_id, 0);
+                } else $dislike_count = '';
+
+            ?>
+
+              <button class="btn likebtn <?php if (select_post_like_user($post_id, $user_id, 1) != null) {
+                                                echo 'green';
+                                            } ?>" id="btn_like" name="btn_liking" value="true" type="submit">
+                  <span class="like-count" id="like-count"><?= $like_count; ?></span>
                   <i class="fa fa-thumbs-up fa-lg" aria-hidden="true"></i>
                   <input type="hidden" name="like-count" id="buttons-like" value="true">
               </button>
 
-              <button class="btn dislikebtn" id="btn_dislike" name="btn_liking" value="true" type="submit">
+              <button class="btn dislikebtn <?php if (select_post_like_user($post_id, $user_id, 0) != null) {
+                                                echo 'red';
+                                            } ?>" id="btn_dislike" name="btn_liking" value="true" type="submit">
                   <i class="fa fa-thumbs-down fa-lg" aria-hidden="true"></i>
-                  <span class="like-count" id="dislike-count"><?= get_post_meta($post_id, '_post_disliking', true); ?></span>
+                  <span class="like-count" id="dislike-count"><?= $dislike_count; ?></span>
                   <input type="hidden" name="dislike-count" id="buttons-like" value="true">
               </button>
 

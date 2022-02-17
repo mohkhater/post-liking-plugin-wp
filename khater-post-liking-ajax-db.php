@@ -39,7 +39,7 @@ function the_liking_form($post_id, $user_id)
     include __DIR__ . '/liking-form.php';
 }
 
-function do_liking_post($post_id)
+function do_liking_post($post_id, $user_id)
 {
 
 
@@ -52,29 +52,54 @@ function do_liking_post($post_id)
     if (isset($_POST['post_id'])) {
 
         $post_id = $_POST['post_id'];
-        $post_like = (int) get_post_meta($post_id, '_post_liking', true);
-        $post_dislike = (int) get_post_meta($post_id, '_post_disliking', true);
+        $user_id = $_POST['user_id'];
+        // $post_like = (int) get_post_meta($post_id, '_post_liking', true);
+        // $post_dislike = (int) get_post_meta($post_id, '_post_disliking', true);
 
+        // $post_like = get_post_like_count($post_id, 1);
+        // $post_dislike = get_post_like_count($post_id, 0);
 
         if (isset($_POST['btn']) && ($_POST['btn'] == 'like')) {
 
             if ($_POST['btn_liking'] == 'true') {
-                $post_like++;
-                update_post_meta($post_id, '_post_liking', $post_like);
+                // $post_like++;
+
+                if (select_post_like_user($post_id, $user_id, 0) == null) {
+
+                    mak_insert_db($post_id, $user_id, 1);
+                } else {
+                    mak_update_db($post_id, $user_id, 1);
+                }
+
+                //   update_post_meta($post_id, '_post_liking', $post_like);
+                // 
             } elseif ($_POST['btn_liking'] == 'false') {
-                $post_like--;
-                update_post_meta($post_id, '_post_liking', $post_like);
+
+                mak_delete_db($post_id, $user_id);
+                //   $post_like--;
+
+                //     update_post_meta($post_id, '_post_liking', $post_like);
             }
         } else 
         if (isset($_POST['btn']) && ($_POST['btn'] == 'dislike')) {
 
             if ($_POST['btn_liking'] == 'true') {
-                $post_dislike++;
+                //  $post_dislike++;
+                if (select_post_like_user($post_id, $user_id, 1) == null) {
 
-                update_post_meta($post_id, '_post_disliking', $post_dislike);
+                    mak_insert_db($post_id, $user_id, 0);
+                } else {
+                    mak_update_db($post_id, $user_id, 0);
+                }
+
+
+                //  update_post_meta($post_id, '_post_disliking', $post_dislike);
             } elseif ($_POST['btn_liking'] == 'false') {
-                $post_dislike--;
-                update_post_meta($post_id, '_post_disliking', $post_dislike);
+                //  $post_dislike--;
+
+                mak_delete_db($post_id, $user_id);
+
+                //   update_post_meta($post_id, '_post_disliking', $post_dislike);
             }
         }
     }
@@ -83,17 +108,18 @@ function do_liking_post($post_id)
 function normal_post_liking()
 {
     $post_id = $_POST['post_id'] ?? 0;
+    $user_id = $_POST['user_id'] ?? 0;
 
     if (!$post_id) {
         wp_die('No post Selected!');
     }
-    do_liking_post($post_id);
+    do_liking_post($post_id, $user_id);
 
     wp_redirect(get_permalink($post_id));
 }
 
 
-add_action('admin_post_post-liking', 'normal_post_liking');
+add_action('admin_post_post-liking', 'normal_post_liking', 10, 2);
 //add_action('admin_post_nopriv_post-liking', 'normal_post_liking');
 
 
@@ -102,6 +128,7 @@ add_action('admin_post_post-liking', 'normal_post_liking');
 function ajax_post_liking()
 {
     $post_id = $_POST['post_id'] ?? 0;
+    $user_id = $_POST['user_id'] ?? 0;
 
     if (!$post_id) {
         wp_send_json_error([
@@ -109,22 +136,30 @@ function ajax_post_liking()
         ]);
     }
 
-    $session_name = 'post_liked' . $post_id;
+    // $session_name = 'post_liked' . $post_id;
 
-    if (isset($_SESSION[$session_name]) && $_SESSION[$session_name]) {
-        return;
-    }
-    $_SESSION[$session_name] = true;
-
-
-    do_liking_post($post_id);
+    // if (isset($_SESSION[$session_name]) && $_SESSION[$session_name]) {
+    //     return;
+    // }
+    // $_SESSION[$session_name] = true;
 
 
-    $meta = get_post_meta($post_id);
+    do_liking_post($post_id, $user_id);
+
+
+    // $meta = get_post_meta($post_id);
+
+    if (get_post_like_count($post_id, 1) != 0) {
+        $like_count = get_post_like_count($post_id, 1);
+    } else $like_count = '';
+
+    if (get_post_like_count($post_id, 0) != 0) {
+        $dislike_count = get_post_like_count($post_id, 0);
+    } else $dislike_count = '';
 
     wp_send_json([
-        'post_like' => (int)$meta['_post_liking'][0],
-        'post_dislike' => (int)$meta['_post_disliking'][0],
+        'post_like' => $like_count,
+        'post_dislike' => $dislike_count,
     ]);
 }
 
@@ -151,16 +186,16 @@ add_action('wp_enqueue_scripts', 'enqueue_mak_style');
 
 
 
-function the_post_liking($post_id)
-{
-    if (!$post_id) {
-        $post_id = get_the_ID();
-    }
-    $like_count = (int)get_post_meta($post_id, '_post_liking', true);
-    $dislike_count = (int)get_post_meta($post_id, '_post_disliking', true);
+// function the_post_liking($post_id)
+// {
+//     if (!$post_id) {
+//         $post_id = get_the_ID();
+//     }
+//     $like_count = (int)get_post_meta($post_id, '_post_liking', true);
+//     $dislike_count = (int)get_post_meta($post_id, '_post_disliking', true);
 
-    printf('<div class="post_liking">like: <span>%d</span>  and dislike: <span>%d</span></div>', $like_count, $like_count);
-}
+//     printf('<div class="post_liking">like: <span>%d</span>  and dislike: <span>%d</span></div>', $like_count, $like_count);
+// }
 
 
 function enqueue_like_scripts()

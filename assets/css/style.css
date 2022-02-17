@@ -4,6 +4,10 @@ button {
     color: #AAA;
 }
 
+.mak-plugin .btn {
+    color: #AAA;
+}
+
 .mak-plugin .btn:focus {
     outline: none;
 }
@@ -27,7 +31,7 @@ button {
 
 }
 
-.mak-plugin .unuser{
-    font-size: xx-small;
+.mak-plugin .unuser {
+    font-size:medium;
     color: #AAA;
 }

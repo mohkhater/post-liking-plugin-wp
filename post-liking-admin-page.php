@@ -5,7 +5,7 @@
         <thead>
             <tr>
                 <th></th>
-                <th>Post</th>
+                <th>Post Title</th>
                 <th>Like Count</th>
                 <th>Dislike Count</th>
                 <th>Like Time</th>
@@ -15,18 +15,18 @@
         <tbody>
             <?php
 
-          //  $wpdb->show_errors();
+            //  $wpdb->show_errors();
 
-            $query = " SELECT * FROM `{$wpdb->prefix}mak_postliking` ORDER BY `like_date` DESC ";
+            $query = " SELECT * FROM `{$wpdb->prefix}mak_postliking` ORDER BY `like_date` DESC  ";
 
             $result = $wpdb->get_results($query);
-             
+
             foreach ($result as $row) :
 
             ?>
                 <tr>
                     <td></td>
-                    <td><?= $row->post_id ?></td>
+                    <td><?= get_the_title($row->post_id) ?></td>
                     <td><?= $row->like_type ?></td>
                     <td><?= $row->like_type ?></td>
                     <td><?= $row->like_date ?></td>

@@ -32,6 +32,65 @@ function mk_post_liking_uninstall()
 register_uninstall_hook(__FILE__, 'mk_post_liking_uninstall');
 
 
+
+function mak_insert_db($post_id, $user_id, $like)
+{
+    global $wpdb;
+    $wpdb->insert("{$wpdb->prefix}mak_postliking", [
+        'post_id' => $post_id,
+        'user_id' => $user_id,
+        'like_type' => $like,
+        'like_date' => date('Y-m-d H:i:s'),
+    ]);
+}
+
+function mak_update_db($post_id, $user_id, $like)
+{
+    global $wpdb;
+    $wpdb->update("{$wpdb->prefix}mak_postliking", [
+        'like_type' => $like,
+        'like_date' => date('Y-m-d H:i:s'),
+    ], [
+        'post_id' => $post_id,
+        'user_id' => $user_id,
+    ]);
+}
+
+
+function mak_delete_db($post_id, $user_id)
+{
+    global $wpdb;
+    if (($post_id) && ($user_id)) {
+
+        $wpdb->delete(
+            "{$wpdb->prefix}mak_postliking",
+            [
+                'post_id' => $post_id,
+                'user_id' => $user_id
+            ]
+        );
+    }
+}
+
+
+function get_post_like_count($post_id, $type)
+{
+
+    global $wpdb;
+    $user_count = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}mak_postliking
+  where post_id={$post_id} and like_type={$type}");
+    return $user_count;
+}
+
+function select_post_like_user($post_id, $user_id, $type)
+{
+
+    global $wpdb;
+    $id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}mak_postliking
+  where post_id={$post_id} and user_id={$user_id} and like_type={$type}");
+    return $id;
+}
+
 function do_liking_post_db()
 // function do_liking_post_db($post_id)
 {
