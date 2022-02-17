@@ -4,36 +4,42 @@
  
     // like button
     $('#btn_like').on('click', function (e) {
-        e.preventDefault();
-        var data = {
+      e.preventDefault();
+      
+      var data = {
+          
                 action: 'post-liking',
                 nonce: $('#nonce').val(),
                 post_id: $('#post_id').val(),
+                user_id: $('#user_id').val(),
                 btn_liking: $('#btn_like').val(),
                 btn:'like'
             };
     
-      //  var data  = $('#liking-form').serialize();
-        var t =$('#btn_like');
 
+      
+        //  var data  = $('#liking-form').serialize();
+        var t = $('#btn_like');
 
-      // send data by url and recieve response
+        // send data by url and recieve response
         $.post(data_ajax.ajax_url, data, function (response) {
-            $('#like-count').html(`${response.post_like}`);
-                    if( t.val() =="true"){
-                        t.val("false");
-                        t.addClass('green').removeClass('gray');
+          $('#like-count').html(`${response.post_like}`);
+          if (t.val() == "true") {
+            
+            t.val("false");
+            t.addClass('green').removeClass('gray');
                        
-                    }
-                    else if( t.val()=="false"){
-                        t.val("true");
-                         t.addClass('gray').removeClass('green');
+          }
+          else if (t.val() == "false") {
+            t.val("true");
+            t.addClass('gray').removeClass('green');
                 
-                    }
+          }
                 
           
 
-        })
+        });
+
     })
 
     // dislike button

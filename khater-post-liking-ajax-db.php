@@ -13,44 +13,28 @@
  * Domain Path: /languages
  */
 
-//add_shortcode('khater-post-liking-shortcode', 'shortcode_mak_post_liking');
-//add_action('wp_enqueue_scripts', 'enqueue_so_22579460');
 
-add_action('wp_enqueue_scripts', 'enqueue_mak_style');
-
-/**
- * Enqueue our script inside the shortcode 
- */
-function shortcode_mak_post_liking($attributes)
+function mak_post_liking_form_shortcode($post_id, $user_id)
 {
-    wp_enqueue_script('my-script');
     ob_start();
     include __DIR__ . '/liking-form.php';
+
     $result = ob_get_clean();
 
     return $result;
 }
 
+function mak_post_liking_add_shortcode()
+{
 
-// function mak_post_liking_form_shortcode()
-// {
-//     ob_start();
-//     include __DIR__ . '/liking-form.php';
-//     return ob_get_clean();
-// }
+    add_shortcode('mak-post-liking_shortcode', 'mak_post_liking_form_shortcode');
+}
 
-// function mak_post_liking_add_shortcode()
-// {
-
-//     add_shortcode('mak-post-liking_shortcode', 'mak_post_liking_form_shortcode');
-// }
-
-// add_action('init', 'mak_post_liking_add_shortcode');
+add_action('init', 'mak_post_liking_add_shortcode', 10, 2);
 
 
 
-
-function the_liking_form($post_id)
+function the_liking_form($post_id, $user_id)
 {
     include __DIR__ . '/liking-form.php';
 }
@@ -110,7 +94,7 @@ function normal_post_liking()
 
 
 add_action('admin_post_post-liking', 'normal_post_liking');
-add_action('admin_post_nopriv_post-liking', 'normal_post_liking');
+//add_action('admin_post_nopriv_post-liking', 'normal_post_liking');
 
 
 
@@ -145,7 +129,7 @@ function ajax_post_liking()
 }
 
 add_action('wp_ajax_post-liking', 'ajax_post_liking');
-add_action('wp_ajax_nopriv_post-liking', 'ajax_post_liking');
+//add_action('wp_ajax_nopriv_post-liking', 'ajax_post_liking');
 
 
 function enqueue_mak_style()
@@ -161,7 +145,7 @@ function enqueue_mak_style()
     }
 }
 
-
+add_action('wp_enqueue_scripts', 'enqueue_mak_style');
 
 
 

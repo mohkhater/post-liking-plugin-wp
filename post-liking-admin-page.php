@@ -15,7 +15,7 @@
         <tbody>
             <?php
 
-            $wpdb->show_errors();
+          //  $wpdb->show_errors();
 
             $query = " SELECT * FROM `{$wpdb->prefix}mak_postliking` ORDER BY `like_date` DESC ";
 

@@ -81,20 +81,7 @@ function do_liking_post_db()
 add_action('admin_post_post-liking', 'do_liking_post_db', 10);
 add_action('admin_post_nopriv_post-liking', 'do_liking_post_db', 10);
 
-function mak_post_liking_form_shortcode()
-{
-    ob_start();
-    include __DIR__ . '/liking-form.php';
-    return ob_get_clean();
-}
 
-function mak_post_liking_add_shortcode()
-{
-
-    add_shortcode('mak-post-liking_shortcode', 'mak_post_liking_form_shortcode');
-}
-
-add_action('init', 'mak_post_liking_add_shortcode');
 
 function mak_post_liking_admin_pages()
 {
